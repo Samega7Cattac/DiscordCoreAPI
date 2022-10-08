@@ -56,31 +56,126 @@ set_target_properties(
 	CXX_EXTENSIONS OFF
 )
 
+find_package(Threads REQUIRED)
+
+set (SIMDJSON_INCLUDE_DIR "" CACHE PATH "Path to the include dir of ffmpeg simdjson lib")
+set (SIMDJSON_LIBRARY_PATH "" CACHE PATH "Path to the binary of ffmpeg simdjson lib")
+if ("${SIMDJSON_INCLUDE_DIR}" STREQUAL "" AND
+	"${SIMDJSON_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(SIMDJSON REQUIRED simdjson)
+	set (SIMDJSON_LIBRARY_PATH ${SIMDJSON_LINK_LIBRARIES})
+	set (SIMDJSON_INCLUDE_DIR ${SIMDJSON_INCLUDE_DIRS})
+endif()
+
+set (OPENSSL_INCLUDE_DIR "" CACHE PATH "Path to the include dir of OpenSSL lib")
+set (OPENSSL_LIBRARY_PATH "" CACHE PATH "Path to the binary of OpenSSL lib")
+if ("${OPENSSL_INCLUDE_DIR}" STREQUAL "" AND
+	"${OPENSSL_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(OPENSSL REQUIRED openssl)
+	set (OPENSSL_LIBRARY_PATH ${OPENSSL_LINK_LIBRARIES})
+	set (OPENSSL_INCLUDE_DIR ${OPENSSL_INCLUDE_DIRS})
+#	pkg_check_modules(CRYPTO REQUIRED libcrypto)
+#	list (APPEND OPENSSL_LIBRARY_PATH ${CRYPTO_LINK_LIBRARIES})
+#	list (APPEND OPENSSL_INCLUDE_DIR ${CRYPTO_INCLUDE_DIRS})
+#	pkg_check_modules(SSL REQUIRED libssl)
+#	list (APPEND OPENSSL_LIBRARY_PATH ${SSL_LINK_LIBRARIES})
+#	list (APPEND OPENSSL_INCLUDE_DIR ${SSL_INCLUDE_DIRS})
+endif()
+
+set (SODIUM_INCLUDE_DIR "" CACHE PATH "Path to the include dir of Sodium lib")
+set (SODIUM_LIBRARY_PATH "" CACHE PATH "Path to the binary of Sodium lib")
+if ("${SODIUM_INCLUDE_DIR}" STREQUAL "" AND
+	"${SODIUM_LIBRARY_PATH}" STREQUAL "")
+#	if (EXISTS "${VCPKG_ROOT}")
+#		find_package(unofficial-sodium REQUIRED)
+#		get_target_property(SODIUM_LIBRARY_PATH unofficial-sodium::sodium LINK_DIRECTORIES)
+#		get_target_property(SODIUM_INCLUDE_DIR unofficial-sodium::sodium INCLUDE_DIRECTORIES)
+#	else()
+		find_package(PkgConfig REQUIRED)
+		pkg_check_modules(SODIUM REQUIRED libsodium)
+		set (SODIUM_LIBRARY_PATH ${SODIUM_LINK_LIBRARIES})
+		set (SODIUM_INCLUDE_DIR ${SODIUM_INCLUDE_DIRS})
+#	endif()
+endif()
+
+set (AVFORMAT_INCLUDE_DIR "" CACHE PATH "Path to the include dir of ffmpeg AVFormat lib")
+set (AVFORMAT_LIBRARY_PATH "" CACHE PATH "Path to the binary of ffmpeg AVFormat lib")
+if ("${AVFORMAT_INCLUDE_DIR}" STREQUAL "" AND
+	"${AVFORMAT_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(AVFORMAT REQUIRED libavformat)
+	set (AVFORMAT_LIBRARY_PATH ${AVFORMAT_LINK_LIBRARIES})
+	set (AVFORMAT_INCLUDE_DIR ${AVFORMAT_INCLUDE_DIRS})
+endif()
+
+set (AVCODEC_INCLUDE_DIR "" CACHE PATH "Path to the include dir of ffmpeg AVCodec lib")
+set (AVCODEC_LIBRARY_PATH "" CACHE PATH "Path to the binary of ffmpeg AVCodec lib")
+if ("${AVCODEC_INCLUDE_DIR}" STREQUAL "" AND
+	"${AVCODEC_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(AVCODEC REQUIRED libavcodec)
+	set (AVCODEC_LIBRARY_PATH ${AVCODEC_LINK_LIBRARIES})
+	set (AVCODEC_INCLUDE_DIR ${AVCODEC_INCLUDE_DIRS})
+endif()
+
+set (AVUTIL_INCLUDE_DIR "" CACHE PATH "Path to the include dir of ffmpeg AVUtil lib")
+set (AVUTIL_LIBRARY_PATH "" CACHE PATH "Path to the binary of ffmpeg AVUtil lib")
+if ("${AVUTIL_INCLUDE_DIR}" STREQUAL "" AND
+	"${AVUTIL_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(AVUTIL REQUIRED libavutil)
+	set (AVUTIL_LIBRARY_PATH ${AVUTIL_LINK_LIBRARIES})
+	set (AVUTIL_INCLUDE_DIR ${AVUTIL_INCLUDE_DIRS})
+endif()
+
+set (SWRESAMPLE_INCLUDE_DIR "" CACHE PATH "Path to the include dir of ffmpeg SWResample lib")
+set (SWRESAMPLE_LIBRARY_PATH "" CACHE PATH "Path to the binary of ffmpeg SWResample lib")
+if ("${SWRESAMPLE_INCLUDE_DIR}" STREQUAL "" AND
+	"${SWRESAMPLE_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
+	set (SWRESAMPLE_LIBRARY_PATH ${SWRESAMPLE_LINK_LIBRARIES})
+	set (SWRESAMPLE_INCLUDE_DIR ${SWRESAMPLE_INCLUDE_DIRS})
+endif()
+
+set (OPUS_INCLUDE_DIR "" CACHE PATH "Path to the include dir of OPUS lib")
+set (OPUS_LIBRARY_PATH "" CACHE PATH "Path to the binary of OPUS lib")
+if ("${OPUS_INCLUDE_DIR}" STREQUAL "" AND
+	"${OPUS_LIBRARY_PATH}" STREQUAL "")
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(OPUS REQUIRED opus)
+	set (OPUS_LIBRARY_PATH ${OPUS_LINK_LIBRARIES})
+	set (OPUS_INCLUDE_DIR ${OPUS_INCLUDE_DIRS})
+endif()
+
+target_link_libraries(
+	"${LIB_NAME}" PRIVATE
+	${SIMDJSON_LIBRARY_PATH}
+	${OPENSSL_LIBRARY_PATH}
+	${SODIUM_LIBRARY_PATH}
+	${AVFORMAT_LIBRARY_PATH}
+	${AVCODEC_LIBRARY_PATH}
+	${AVUTIL_LIBRARY_PATH}
+	${SWRESAMPLE_LIBRARY_PATH}
+	${OPUS_LIBRARY_PATH}
+	Threads::Threads
+)
+
 target_include_directories(
 	"${LIB_NAME}" PUBLIC
 	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
 	PRIVATE
 	"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Include/>"
-)
-
-find_package(FFMPEG MODULE REQUIRED)
-find_package(OPENSSL MODULE REQUIRED)
-find_package(OPUS MODULE REQUIRED)
-find_package(SIMDJSON MODULE REQUIRED)
-find_package(SODIUM MODULE REQUIRED)
-
-target_link_libraries(
-	"${LIB_NAME}" PUBLIC
-	$<$<TARGET_EXISTS:FFMPEG::AVFormat>:FFMPEG::AVFormat>
-	$<$<TARGET_EXISTS:FFMPEG::AVCodec>:FFMPEG::AVCodec>
-	$<$<TARGET_EXISTS:FFMPEG::AVUtil>:FFMPEG::AVUtil>
-	$<$<TARGET_EXISTS:FFMPEG::SWResample>:FFMPEG::SWResample>
-	$<$<TARGET_EXISTS:OPENSSL::Ssl>:OPENSSL::Ssl>
-	$<$<TARGET_EXISTS:OPENSSL::Crypto>:OPENSSL::Crypto>
-	$<$<TARGET_EXISTS:OPUS::Opus>:OPUS::Opus>
-	$<$<TARGET_EXISTS:SIMDJSON::Simdjson>:SIMDJSON::Simdjson>
-	$<$<TARGET_EXISTS:SODIUM::Sodium>:SODIUM::Sodium>
-	$<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
+	${SIMDJSON_INCLUDE_DIR}
+	${OPENSSL_INCLUDE_DIR}
+	${SODIUM_INCLUDE_DIR}
+	${AVFORMAT_INCLUDE_DIR}
+	${AVCODEC_INCLUDE_DIR}
+	${AVUTIL_INCLUDE_DIRS}
+	${SWRESAMPLE_INCLUDE_DIR}
+	${OPUS_INCLUDE_DIR}
 )
 
 target_compile_features(

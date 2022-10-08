@@ -67,7 +67,10 @@
         "value": "x64"
       },
       "binaryDir": "${sourceDir}/Build/Release-With-ASAN",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
       "condition": {
         "lhs": "${hostSystemName}",
         "rhs": "Windows",
@@ -86,7 +89,10 @@
         "value": "x64"
       },
       "binaryDir": "${sourceDir}/Build/Release",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
       "condition": {
         "lhs": "${hostSystemName}",
         "rhs": "Windows",
@@ -104,7 +110,10 @@
         "value": "x64"
       },
       "binaryDir": "${sourceDir}/Build/Debug",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
       "condition": {
         "lhs": "${hostSystemName}",
         "rhs": "Windows",
@@ -118,7 +127,10 @@
     },
     {
       "binaryDir": "${sourceDir}/Build/Release-With-ASAN",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
       "condition": {
         "lhs": "${hostSystemName}",
         "rhs": "Linux",
@@ -133,7 +145,10 @@
     },
     {
       "binaryDir": "${sourceDir}/Build/Release",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
       "condition": {
         "lhs": "${hostSystemName}",
         "rhs": "Linux",
@@ -147,7 +162,10 @@
     },
     {
       "binaryDir": "${sourceDir}/Build/Debug",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      },
       "condition": {
         "lhs": "${hostSystemName}",
         "rhs": "Linux",
