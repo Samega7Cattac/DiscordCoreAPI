@@ -61,36 +61,48 @@ set_target_properties(
 	CXX_EXTENSIONS OFF
 )
 
-find_package(FFMPEG MODULE REQUIRED)
-find_package(OpenSSL REQUIRED)
-find_package(Opus CONFIG REQUIRED)
-find_package(simdjson CONFIG REQUIRED)
-find_package(unofficial-sodium CONFIG REQUIRED)
+find_package(Threads REQUIRED)
+find_package(PkgConfig REQUIRED)
 
-get_target_property(OpenSSL_INCLUDE OpenSSL::SSL INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(simdjson_INCLUDE simdjson::simdjson INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(unofficial_sodium_INCLUDE unofficial-sodium::sodium INTERFACE_INCLUDE_DIRECTORIES)
+pkg_check_modules(SIMDJSON REQUIRED simdjson)
+target_compile_definitions(${LIB_NAME}
+	PRIVATE
+		SIMDJSON_THREADS_ENABLED)
+
+pkg_check_modules(OPENSSL REQUIRED openssl)
+pkg_check_modules(AVFORMAT REQUIRED libavformat)
+pkg_check_modules(AVCODEC REQUIRED libavcodec)
+pkg_check_modules(AVUTIL REQUIRED libavutil)
+pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
+pkg_check_modules(OPUS REQUIRED opus)
+pkg_check_modules(SODIUM REQUIRED libsodium)
 
 target_include_directories(
 	"${LIB_NAME}" PUBLIC
 	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
 	PRIVATE
-	"$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Include/>"
-	"${simdjson_INCLUDE}"
-	"${OpenSSL_INCLUDE}"
-	"${unofficial_sodium_INCLUDE}"
+		"../Include"
+		${SIMDJSON_INCLUDE_DIR}
+		${OPENSSL_INCLUDE_DIR}
+		${SODIUM_INCLUDE_DIR}
+		${AVFORMAT_INCLUDE_DIR}
+		${AVCODEC_INCLUDE_DIR}
+		${AVUTIL_INCLUDE_DIRS}
+		${SWRESAMPLE_INCLUDE_DIR}
+		${OPUS_INCLUDE_DIR}
 )
 
 target_link_libraries(
 	"${LIB_NAME}" PUBLIC
-	${FFMPEG_LIBRARIES}
-	$<$<TARGET_EXISTS:OpenSSL::SSL>:OpenSSL::SSL>
-	$<$<TARGET_EXISTS:OpenSSL::Crypto>:OpenSSL::Crypto>
-	$<$<TARGET_EXISTS:Opus::opus>:Opus::opus>
-	$<$<TARGET_EXISTS:simdjson::simdjson>:simdjson::simdjson>
-	$<$<TARGET_EXISTS:unofficial-sodium::sodium>:unofficial-sodium::sodium>
-	$<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
-)
+		${SIMDJSON_LIBRARY_PATH}
+		${OPENSSL_LIBRARY_PATH}
+		${SODIUM_LIBRARY_PATH}
+		${AVFORMAT_LIBRARY_PATH}
+		${AVCODEC_LIBRARY_PATH}
+		${AVUTIL_LIBRARY_PATH}
+		${SWRESAMPLE_LIBRARY_PATH}
+		${OPUS_LIBRARY_PATH}
+	)
 
 target_compile_features(
 	"${LIB_NAME}" PUBLIC

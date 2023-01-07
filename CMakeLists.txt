@@ -22,15 +22,6 @@
 # May 13, 2021
 # https://discordcoreapi.com
 
-# Set this value...
-set(_VCPKG_ROOT_DIR "")
-# OR these values.
-set(FFMPEG_DIR "C:/Vcpkg/installed/x64-windows/share/ffmpeg") # Set this one to the folder location of the file "FindFFMPEG.cmake".
-set(Opus_DIR "C:/Vcpkg/installed/x64-windows/share/opus") # Set this one to the folder location of the file "OpusConfig.cmake".
-set(simdjson_DIR "C:/Vcpkg/installed/x64-windows/share/simdjson") # Set this one to the folder location of the file "simdjson-config.cmake".
-set(unofficial-sodium_DIR "C:/Vcpkg/installed/x64-windows/share/unofficial-sodium") # Set this one to the folder location of the file "unofficial-sodiumConfig.cmake".
-set(OPENSSL_ROOT_DIR "C:/Vcpkg/installed/x64-windows/") # Set this one to the folder location of the include folder and library folders of OpenSSL.
-
 cmake_minimum_required(VERSION 3.20)
 set(PROJECT_NAME "DiscordCoreAPI")
 set(LIB_NAME "${PROJECT_NAME}")
@@ -46,34 +37,5 @@ project(
 )
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/CMake;${FFMPEG_DIR};${OpenSSL_DIR}")
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}")
-
-if(EXISTS "${_VCPKG_INSTALLED_DIR}")
-	set(OS_NAME "${CMAKE_SYSTEM_NAME}")
-	string(TOLOWER "${OS_NAME}" OS_NAME)
-	set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${_VCPKG_ROOT_DIR}/installed/x64-${OS_NAME}/share/ffmpeg")
-	set(DEBUG_PREFIX "")
-else()
-	set(DEBUG_PREFIX "debug/")
-	if (WIN32)
-		if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-			cmake_path(GET CMAKE_ROOT ROOT_PATH ROOT_DRIVE)
-			if (DEFINED ENV{EnableASAN})
-				set(CMAKE_INSTALL_PREFIX "${ROOT_DRIVE}Users/$ENV{USERNAME}/CMake/${PROJECT_NAME}/ASAN" CACHE PATH "The CMake install prefix." FORCE)
-			else()
-				set(CMAKE_INSTALL_PREFIX "${ROOT_DRIVE}Users/$ENV{USERNAME}/CMake/${PROJECT_NAME}" CACHE PATH "The CMake install prefix." FORCE)
-			endif()
-		endif()
-	elseif(UNIX)
-		if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-			if (DEFINED ENV{EnableASAN})
-				set(CMAKE_INSTALL_PREFIX "/home/$ENV{USERNAME}/CMake/${PROJECT_NAME}/ASAN" CACHE PATH "The CMake install prefix." FORCE)
-			else()
-				set(CMAKE_INSTALL_PREFIX "/home/$ENV{USERNAME}/CMake/${PROJECT_NAME}" CACHE PATH "The CMake install prefix." FORCE)
-			endif()
-		endif()
-	else()
-		message(FATAL_ERROR "Sorry, but your OS is not supported!")
-	endif()
-endif()
 
 add_subdirectory(Library)
